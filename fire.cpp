@@ -4,72 +4,96 @@
 // Fire animation variables
 const CRGBPalette16 FIRE_PALETTE = CRGBPalette16( CRGB::Black, CRGB::Red, CRGB::Yellow, CRGB::White);
 
-#define MAX_PIXEL_HEAT 255
+#define MAX_PIXEL_HEAT 240
+
+void injectLinearHeat(FireData* fireData, int heatToInject);
 
 FireData* fireSetup(int ledArrayLength, int msToCool) {
   FireData* fireData = new FireData();
-  fireData->pixelHeatArray = new byte[ledArrayLength]();
+  fireData->pixelHeatArray = new float[ledArrayLength]();
   fireData->pixelHeatArrayLength = ledArrayLength;
-  fireData->msToCool = msToCool;
+  fireData->amountCooledPerMs = (float)255 / msToCool;
 
-  int initialValue = 0;
-  for (int i = 0; i < ledArrayLength; i++) {
-    fireData->pixelHeatArray[i] = initialValue;
-    initialValue += 255 / fireData->pixelHeatArrayLength;
-  }
+  // injectLinearHeat(fireData, 255 * ledArrayLength / 4);
 
   return fireData;
 }
 
-void applyHeatArrayToPixels(byte* pixelHeatArray, CRGB* ledArray, int ledArrayLength) {
+#define BRIGHTNESS 25.5 // Between 0-255
+
+void applyHeatArrayToPixels(FireData* fireData, CRGB* ledArray) {
+  float* pixelHeatArray = fireData->pixelHeatArray;
+  int ledArrayLength = fireData->pixelHeatArrayLength;
+
   for(int i = 0; i < ledArrayLength; i++) {
-    byte colorindex = pixelHeatArray[i];
-    CRGB color = ColorFromPalette(FIRE_PALETTE, colorindex).nscale8(255 / 10);
+    float colorindex = pixelHeatArray[i];
+    CRGB color = ColorFromPalette(FIRE_PALETTE, colorindex);
+    // color = color.nscale8(BRIGHTNESS);
     ledArray[i] = color;
   }
 }
 
-void coolPixels(byte* pixelHeatArray, int pixelHeatArrayLength, int msToCool, int msElapsed) {
-  int amountCooledPerMs = msToCool / 255;
-  int amountCooledSinceLastFrame = amountCooledPerMs * msElapsed;
+void coolPixels(FireData* fireData, unsigned long msElapsed) {
+  float amountCooledSinceLastFrame = fireData->amountCooledPerMs * (float)msElapsed;
 
-  for (int i = 0; i < pixelHeatArrayLength; i++) {
-    pixelHeatArray[i] -= amountCooledSinceLastFrame;
-    if (pixelHeatArray[i] < 0) pixelHeatArray[i] = 0;
+  for (int i = 0; i < fireData->pixelHeatArrayLength; i++) {
+    float pixelHeat = fireData->pixelHeatArray[i];
+    if (pixelHeat == 0) continue;
+
+    if (pixelHeat - amountCooledSinceLastFrame < 0) {
+      fireData->pixelHeatArray[i] = 0;
+    } else {
+      fireData->pixelHeatArray[i] = pixelHeat - amountCooledSinceLastFrame;
+    }
   }
 }
 
-// Applies fire animation to heat array.
-// msToCool: number of milliseconds required for a pixel to cool completely
-void applyFireToHeatArray(byte* pixelHeatArray, int pixelHeatArrayLength, int msToCool, int msElapsed, int heatToInject) {
-  // Every pixel has a certain amount of heat which cools every frame.
-  // Heat is injected at the bottom and flows upwards. Each pixel holds one byte (255) of
-  // heat, which overflows to the next pixel.
+// Heat is injected at the bottom and flows upwards. Each pixel holds one byte (255) of
+// heat, which overflows to the next pixel.
+void injectLinearHeat(FireData* fireData, int heatToInject) {
+  float* pixelHeatArray = fireData->pixelHeatArray;
+  int pixelHeatArrayLength = fireData->pixelHeatArrayLength;
 
-  // coolPixels(pixelHeatArray, pixelHeatArrayLength, msToCool, msElapsed);
+  for (int i = 0; i < pixelHeatArrayLength; i++) {
+    int pixelHeatCapacity = MAX_PIXEL_HEAT - pixelHeatArray[i];
 
-  // Inject heat
-  // for (int i = 0; i < pixelHeatArrayLength; i++) {
-  //   int pixelHeatCapacity = MAX_PIXEL_HEAT - pixelHeatArray[i];
-  //
-  //   if (pixelHeatCapacity > heatToInject) pixelHeatCapacity = heatToInject;
-  //
-  //   heatToInject -= pixelHeatCapacity;
-  //   pixelHeatArray[i] += pixelHeatCapacity;
-  //
-  //   if (heatToInject == 0) break;
-  // }
+    if (pixelHeatCapacity > heatToInject) pixelHeatCapacity = heatToInject;
+
+    pixelHeatArray[i] += pixelHeatCapacity;
+    heatToInject -= pixelHeatCapacity;
+
+    if (heatToInject == 0) break;
+  }
 }
 
-void randomFire(CRGB* ledArray, FireData* fireData, int msElapsed) {
+// const int RISING_SPEED = 10; // pixels per second
+// const float RISING_SPEED_PIXELS_PER_MS = RISING_SPEED / 1000.0;
+
+void driftUpAndDiffuse(FireData* fireData) {
+  float* pixels = fireData->pixelHeatArray;
+  for (int i = fireData->pixelHeatArrayLength - 1; i >= 3; i--) {
+    pixels[i] = (pixels[i] + pixels[i - 1] + pixels[i - 2]) / 3.0;
+  }
+}
+
+// void spark(FireData* fireData, int height) {
+//
+// }
+
+void randomFire(CRGB* ledArray, FireData* fireData, unsigned long msElapsed) {
   random16_add_entropy(random());
 
-  int heatToInject = 0;
-  // if (random8() / 255 > percentageChanceToSpark) {
-  //   int maximumHeat = ledArrayLength * MAX_PIXEL_HEAT;
-  //   heatToInject = random8() * maximumHeat;
-  // }
+  int maximumHeat = fireData->pixelHeatArrayLength * MAX_PIXEL_HEAT / 50;
+  int heatToInject = random16(maximumHeat);
 
-  applyFireToHeatArray(fireData->pixelHeatArray, fireData->pixelHeatArrayLength, fireData->msToCool, msElapsed, heatToInject);
-  applyHeatArrayToPixels(fireData->pixelHeatArray, ledArray, fireData->pixelHeatArrayLength);
+  coolPixels(fireData, msElapsed);
+  driftUpAndDiffuse(fireData);
+  // injectLinearHeat(fireData, heatToInject);
+
+  if (random8() < 40) {
+    int y = random8(7);
+    fireData->pixelHeatArray[y] = qadd8( fireData->pixelHeatArray[y], random8(100, 180) );
+  }
+
+  applyHeatArrayToPixels(fireData, ledArray);
 }

@@ -1,7 +1,8 @@
 struct FireData {
-  byte* pixelHeatArray;
+  float* pixelHeatArray;
   int   pixelHeatArrayLength;
-  int   msToCool;
+  // int   msToCool;
+  float amountCooledPerMs;
 };
 FireData* fireSetup(int ledArrayLength, int msToCool);
-void randomFire(CRGB* ledArray, FireData* fireData, int msElapsed);
+void randomFire(CRGB* ledArray, FireData* fireData, unsigned long msElapsed);

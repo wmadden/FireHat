@@ -19,7 +19,9 @@ CRGB topLeds[TOP_LED_COUNT];
 // Memory for fire animations
 FireData* rimFireData;
 FireData* topFireData;
-#define MS_TO_COOL 5000
+#define MS_TO_COOL 1000 
+
+unsigned long lastFrameAt;
 
 void setup() {
   FastLED.setMaxPowerInVoltsAndMilliamps(3, 500);
@@ -32,11 +34,16 @@ void setup() {
 
   rimFireData = fireSetup(RIM_LED_COUNT, MS_TO_COOL);
   topFireData = fireSetup(TOP_LED_COUNT, MS_TO_COOL);
+
+  lastFrameAt = millis();
 }
 
 void loop() {
-  randomFire(rimLeds, rimFireData, 20);
-  randomFire(topLeds, topFireData, 20);
+  unsigned long currentTime = millis();
+  unsigned long timeElapsed = currentTime - lastFrameAt;
+  lastFrameAt = currentTime;
+
+  randomFire(rimLeds, rimFireData, timeElapsed);
+  randomFire(topLeds, topFireData, timeElapsed);
   FastLED.show();
-  FastLED.delay(20);
 }
