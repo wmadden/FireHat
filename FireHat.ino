@@ -17,9 +17,11 @@ CRGB topLeds[TOP_LED_COUNT];
 #include "fire.h"
 
 // Memory for fire animations
-FireData* rimFireData;
-FireData* topFireData;
-#define MS_TO_COOL 1000 
+FireData* rimFireDataLeft;
+FireData* rimFireDataRight;
+FireData* topFireDataLeft;
+FireData* topFireDataRight;
+#define MS_TO_COOL 1000
 
 unsigned long lastFrameAt;
 
@@ -32,8 +34,10 @@ void setup() {
   FastLED.addLeds<WS2812B, TOP_LED_PIN, COLOR_ORDER>(topLeds, TOP_LED_COUNT).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(  BRIGHTNESS );
 
-  rimFireData = fireSetup(RIM_LED_COUNT, MS_TO_COOL);
-  topFireData = fireSetup(TOP_LED_COUNT, MS_TO_COOL);
+  rimFireDataLeft = fireSetup(RIM_LED_COUNT / 2, MS_TO_COOL);
+  rimFireDataRight = fireSetup(RIM_LED_COUNT / 2, MS_TO_COOL);
+  topFireDataLeft = fireSetup(TOP_LED_COUNT / 2, MS_TO_COOL);
+  topFireDataRight = fireSetup(TOP_LED_COUNT / 2, MS_TO_COOL);
 
   lastFrameAt = millis();
 }
@@ -43,7 +47,9 @@ void loop() {
   unsigned long timeElapsed = currentTime - lastFrameAt;
   lastFrameAt = currentTime;
 
-  randomFire(rimLeds, rimFireData, timeElapsed);
-  randomFire(topLeds, topFireData, timeElapsed);
+  // randomFire(rimFireDataLeft, timeElapsed, rimLeds, -1, 16, RIM_LED_COUNT);
+  randomFire(rimFireDataRight, timeElapsed, rimLeds, 1, 40, RIM_LED_COUNT);
+  randomFire(topFireDataLeft, timeElapsed, topLeds, 1, 0, TOP_LED_COUNT);
+  randomFire(topFireDataRight, timeElapsed, topLeds, -1, 0, TOP_LED_COUNT);
   FastLED.show();
 }
