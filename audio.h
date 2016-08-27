@@ -1,2 +1,3 @@
 void audioUpdate();
-int audioLevel();
+int smoothedAudioLevel();
+int unsmoothedAudioLevel();
