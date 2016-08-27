@@ -1,5 +1,6 @@
 #include <FastLED.h>
 #include "fire.h"
+#include "transformIndex.h"
 
 // Fire animation variables
 const CRGBPalette16 FIRE_PALETTE = CRGBPalette16( CRGB::Black, CRGB::Red, CRGB::Yellow, CRGB::White);
@@ -8,36 +9,33 @@ const CRGBPalette16 FIRE_PALETTE = CRGBPalette16( CRGB::Black, CRGB::Red, CRGB::
 
 void injectLinearHeat(FireData* fireData, int heatToInject);
 
-FireData* fireSetup(int pixelHeatArrayLength, int msToCool) {
-// FireData* fireSetup(int ledArrayLength, int msToCool, int indexDirection, int indexOffset) {
+FireData* fireSetup(int ledArrayLength, int msToCool, int indexDirection) {
   FireData* fireData = new FireData();
-  fireData->pixelHeatArray = new float[pixelHeatArrayLength]();
-  fireData->pixelHeatArrayLength = pixelHeatArrayLength;
+  fireData->pixelHeatArray = new float[ledArrayLength]();
+  fireData->pixelHeatArrayLength = ledArrayLength;
   fireData->amountCooledPerMs = (float)255 / msToCool;
-  // fireData->indexDirection = indexDirection;
-  // fireData->indexOffset = indexOffset;
+  fireData->indexDirection = indexDirection;
   return fireData;
 }
 
 #define BRIGHTNESS 25.5 // Between 0-255
 
-void applyHeatArrayToPixels(FireData* fireData, CRGB* destLEDArray, int indexDirection, int destArrayOffset, int destArrayLength) {
+void applyHeatArrayToPixels(FireData* fireData, CRGB* ledArray, int destOffset, int destArrayLength, int direction) {
   float* pixelHeatArray = fireData->pixelHeatArray;
-  int pixelHeatArrayLength = fireData->pixelHeatArrayLength;
+  int ledArrayLength = fireData->pixelHeatArrayLength;
 
-  for(int i = 0; i < destArrayLength; i++) {
+  for(int i = 0; i < ledArrayLength; i++) {
     float colorindex;
-
-    if (indexDirection == 1) {
+    if (fireData->indexDirection == 1) {
       colorindex = pixelHeatArray[i];
     } else {
-      colorindex = pixelHeatArray[pixelHeatArrayLength - 1 - i];
+      colorindex = pixelHeatArray[fireData->pixelHeatArrayLength - 1 - i];
     }
 
     CRGB color = ColorFromPalette(FIRE_PALETTE, colorindex);
     // color = color.nscale8(BRIGHTNESS);
-    // destLEDArray[(destArrayOffset + i) % destArrayLength] = color;
-    destLEDArray[(destArrayOffset + i) % destArrayLength] = color;
+    int destIndex = transformIndex(i, destOffset, destArrayLength, direction);
+    ledArray[destIndex] = color;
   }
 }
 
@@ -92,7 +90,7 @@ void spark(FireData* fireData, int sparkHeight, int sparkHeat) {
   fireData->pixelHeatArray[sparkHeight] = qadd8(fireData->pixelHeatArray[sparkHeight], sparkHeat);
 }
 
-void randomFire(FireData* fireData, unsigned long msElapsed, CRGB* destLEDArray, int indexDirection, int destArrayOffset, int destArrayLength) {
+void randomFire(CRGB* ledArray, FireData* fireData, unsigned long msElapsed, int destOffset, int destArrayLength, int direction) {
   random16_add_entropy(random());
 
   int maximumHeat = fireData->pixelHeatArrayLength * MAX_PIXEL_HEAT / 50;
@@ -100,7 +98,6 @@ void randomFire(FireData* fireData, unsigned long msElapsed, CRGB* destLEDArray,
 
   coolPixels(fireData, msElapsed);
   driftUpAndDiffuse(fireData);
-  // injectLinearHeat(fireData, heatToInject);
 
   if (random8() < SPARK_CHANCE) {
     int sparkHeight = random8(1 + fireData->pixelHeatArrayLength / 10);
@@ -108,5 +105,5 @@ void randomFire(FireData* fireData, unsigned long msElapsed, CRGB* destLEDArray,
     spark(fireData, sparkHeight, sparkHeat);
   }
 
-  applyHeatArrayToPixels(fireData, destLEDArray, indexDirection, destArrayOffset, destArrayLength);
+  applyHeatArrayToPixels(fireData, ledArray, destOffset, destArrayLength, direction);
 }

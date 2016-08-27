@@ -32,12 +32,12 @@ void setup() {
   // Set up LEDs
   FastLED.addLeds<WS2812B, RIM_LED_PIN, COLOR_ORDER>(rimLeds, RIM_LED_COUNT).setCorrection( TypicalLEDStrip );
   FastLED.addLeds<WS2812B, TOP_LED_PIN, COLOR_ORDER>(topLeds, TOP_LED_COUNT).setCorrection( TypicalLEDStrip );
-  FastLED.setBrightness(  BRIGHTNESS );
+  FastLED.setBrightness( BRIGHTNESS );
 
-  rimFireDataLeft = fireSetup(RIM_LED_COUNT / 2, MS_TO_COOL);
-  rimFireDataRight = fireSetup(RIM_LED_COUNT / 2, MS_TO_COOL);
-  topFireDataLeft = fireSetup(TOP_LED_COUNT / 2, MS_TO_COOL);
-  topFireDataRight = fireSetup(TOP_LED_COUNT / 2, MS_TO_COOL);
+  rimFireDataLeft = fireSetup(RIM_LED_COUNT / 2, MS_TO_COOL, 1);
+  rimFireDataRight = fireSetup(RIM_LED_COUNT / 2, MS_TO_COOL, 1);
+  topFireDataLeft = fireSetup(TOP_LED_COUNT / 2, MS_TO_COOL, 1);
+  topFireDataRight = fireSetup(TOP_LED_COUNT / 2, MS_TO_COOL, 1);
 
   lastFrameAt = millis();
 }
@@ -47,9 +47,10 @@ void loop() {
   unsigned long timeElapsed = currentTime - lastFrameAt;
   lastFrameAt = currentTime;
 
-  // randomFire(rimFireDataLeft, timeElapsed, rimLeds, -1, 16, RIM_LED_COUNT);
-  randomFire(rimFireDataRight, timeElapsed, rimLeds, 1, 40, RIM_LED_COUNT);
-  randomFire(topFireDataLeft, timeElapsed, topLeds, 1, 0, TOP_LED_COUNT);
-  randomFire(topFireDataRight, timeElapsed, topLeds, -1, 0, TOP_LED_COUNT);
+  randomFire(rimLeds, rimFireDataLeft, timeElapsed, 62, RIM_LED_COUNT, 1);
+  randomFire(rimLeds, rimFireDataRight, timeElapsed, 61, RIM_LED_COUNT, -1);
+  randomFire(topLeds, topFireDataLeft, timeElapsed, 0, TOP_LED_COUNT, 1);
+  randomFire(topLeds, topFireDataRight, timeElapsed, TOP_LED_COUNT, TOP_LED_COUNT, -1);
+
   FastLED.show();
 }
