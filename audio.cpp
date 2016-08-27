@@ -1,10 +1,8 @@
 #include <FastLED.h>
+#include "config.h"
 #include "audio.h"
 
-#define DC_OFFSET  0  // DC offset in mic signal
-#define NOISE      100
 #define SAMPLES    60  // samples for the mic buffer
-#define MIC_PIN    9
 
 #define MIN_DIST_AUDIO_LEVELS 10
 
@@ -19,7 +17,7 @@ void audioUpdate() {
   uint16_t minLvl, maxLvl;
   int      n, height;
   n   = analogRead(MIC_PIN);                 // Raw reading from mic
-  n   = abs(n - 512 - DC_OFFSET);            // Center on zero
+  n   = abs(n - DC_OFFSET);            // Center on zero
   n   = (n <= NOISE) ? 0 : (n - NOISE);      // Remove noise/hum
   lvl = ((lvl * 7) + n) >> 3;    // "Dampened" reading (else looks twitchy)
 

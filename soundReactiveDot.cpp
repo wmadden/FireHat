@@ -1,5 +1,5 @@
 #include <FastLED.h>
-#include "audio.h"
+#include "config.h"
 #include "transformIndex.h";
 #include "soundReactiveDot.h";
 

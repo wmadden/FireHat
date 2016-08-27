@@ -1,7 +1,7 @@
 #include <FastLED.h>
-#include "ledConfig.h"
+#include "config.h"
 
-#define BRIGHTNESS 50   // 0-255, higher number is brighter.
+#define BRIGHTNESS 20   // 0-255, higher number is brighter.
 #define SATURATION 255   // 0-255, 0 is pure white, 255 is fully saturated color
 
 CRGB rimLeds[RIM_LED_COUNT];
