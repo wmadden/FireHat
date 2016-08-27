@@ -75,14 +75,14 @@ void loop() {
   case AUDIO_FIRE_ANIMATION:
     audioUpdate();
     fire(rimLeds, rimFireDataLeft, timeElapsed, unsmoothedAudioLevel(), RIM_PHYSICAL_CENTER, RIM_LED_COUNT, 1);
-    fire(rimLeds, rimFireDataRight, timeElapsed, unsmoothedAudioLevel(), RIM_PHYSICAL_CENTER - 1, RIM_LED_COUNT, -1);
+    fire(rimLeds, rimFireDataRight, timeElapsed, unsmoothedAudioLevel(), RIM_LED_COUNT + RIM_PHYSICAL_CENTER - 1, RIM_LED_COUNT, -1);
     fire(topLeds, topFireDataLeft, timeElapsed, unsmoothedAudioLevel(), 0, TOP_LED_COUNT, 1);
     fire(topLeds, topFireDataRight, timeElapsed, unsmoothedAudioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
     break;
 
   case FIRE_ANIMATION:
-    randomFire(rimLeds, rimFireDataLeft, timeElapsed, 62, RIM_LED_COUNT, 1);
-    randomFire(rimLeds, rimFireDataRight, timeElapsed, 61, RIM_LED_COUNT, -1);
+    randomFire(rimLeds, rimFireDataLeft, timeElapsed, RIM_PHYSICAL_CENTER, RIM_LED_COUNT, 1);
+    randomFire(rimLeds, rimFireDataRight, timeElapsed, RIM_LED_COUNT + RIM_PHYSICAL_CENTER - 1, RIM_LED_COUNT, -1);
     randomFire(topLeds, topFireDataLeft, timeElapsed, 0, TOP_LED_COUNT, 1);
     randomFire(topLeds, topFireDataRight, timeElapsed, TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
     break;
@@ -98,16 +98,16 @@ void loop() {
 
   case SOUND_REACTIVE_DOT_ANIMATION:
     audioUpdate();
-    soundReactiveDot(rimDotDataLeft, RAINBOW_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), 62, RIM_LED_COUNT, 1);
-    soundReactiveDot(rimDotDataRight, RAINBOW_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), 61, RIM_LED_COUNT, -1);
+    soundReactiveDot(rimDotDataLeft, RAINBOW_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), RIM_PHYSICAL_CENTER, RIM_LED_COUNT, 1);
+    soundReactiveDot(rimDotDataRight, RAINBOW_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), RIM_LED_COUNT + RIM_PHYSICAL_CENTER - 1, RIM_LED_COUNT, -1);
     soundReactiveDot(topDotDataLeft, RAINBOW_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), 0, TOP_LED_COUNT, 1);
     soundReactiveDot(topDotDataRight, RAINBOW_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
     break;
 
   case SOUND_REACTIVE_DOT_FIRE_ANIMATION:
     audioUpdate();
-    soundReactiveDot(rimDotDataLeft, FIRE_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), 62, RIM_LED_COUNT, 1);
-    soundReactiveDot(rimDotDataRight, FIRE_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), 61, RIM_LED_COUNT, -1);
+    soundReactiveDot(rimDotDataLeft, FIRE_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), RIM_PHYSICAL_CENTER, RIM_LED_COUNT, 1);
+    soundReactiveDot(rimDotDataRight, FIRE_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), RIM_LED_COUNT + RIM_PHYSICAL_CENTER - 1, RIM_LED_COUNT, -1);
     soundReactiveDot(topDotDataLeft, FIRE_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), 0, TOP_LED_COUNT, 1);
     soundReactiveDot(topDotDataRight, FIRE_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
     break;
