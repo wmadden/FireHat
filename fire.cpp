@@ -1,11 +1,9 @@
 #include <FastLED.h>
 #include "fire.h"
+#include "palettes.h"
 #include "transformIndex.h"
 
-// Fire animation variables
-const CRGBPalette16 FIRE_PALETTE = CRGBPalette16( CRGB::Black, CRGB::Red, CRGB::Yellow, CRGB::White);
-
-#define MAX_PIXEL_HEAT 240
+#define MAX_PIXEL_HEAT 255
 
 void injectLinearHeat(FireData* fireData, int heatToInject);
 

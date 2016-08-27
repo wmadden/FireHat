@@ -3,16 +3,14 @@
 #include "transformIndex.h";
 #include "soundReactiveDot.h";
 
-#define PEAK_FALL_RATE 200 // Milliseconds before peak drops
-
-const CRGBPalette16 RAINBOW_PALETTE = CRGBPalette16( CRGB::Red, CRGB::Green, CRGB::Blue, CRGB::Red);
+#define PEAK_FALL_RATE 100 // Milliseconds before peak drops
 
 SoundReactiveDotData* soundReactiveDotSetup() {
   SoundReactiveDotData* data = new SoundReactiveDotData();
   return data;
 }
 
-void soundReactiveDot(SoundReactiveDotData* data, CRGB* ledArray, int pixelCount, unsigned long msElapsed, int audioLevel, int destOffset, int destArrayLength, int direction) {
+void soundReactiveDot(SoundReactiveDotData* data, CRGBPalette16 palette, CRGB* ledArray, int pixelCount, unsigned long msElapsed, int audioLevel, int destOffset, int destArrayLength, int direction) {
   if(audioLevel < 0L) audioLevel = 0; // Clip output
   else if(audioLevel > MAX_AUDIO_LEVEL) audioLevel = MAX_AUDIO_LEVEL;
 
@@ -26,7 +24,7 @@ void soundReactiveDot(SoundReactiveDotData* data, CRGB* ledArray, int pixelCount
     if(i >= scaledAudioLevel) {
       ledArray[destIndex] = CRGB::Black;
     } else {
-      ledArray[destIndex] = ColorFromPalette(RAINBOW_PALETTE, map(i, 0, pixelCount - 1, 0, 255));
+      ledArray[destIndex] = ColorFromPalette(palette, map(i, 0, pixelCount - 1, 0, 255));
     }
   }
 

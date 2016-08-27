@@ -5,4 +5,4 @@ struct SoundReactiveDotData {
 
 SoundReactiveDotData* soundReactiveDotSetup();
 
-void soundReactiveDot(SoundReactiveDotData* data, CRGB* ledArray, int pixelCount, unsigned long msElapsed, int audioLevel, int destOffset, int destArrayLength, int direction);
+void soundReactiveDot(SoundReactiveDotData* data, CRGBPalette16 palette, CRGB* ledArray, int pixelCount, unsigned long msElapsed, int audioLevel, int destOffset, int destArrayLength, int direction);

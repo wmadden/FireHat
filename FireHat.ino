@@ -1,20 +1,15 @@
 #include <FastLED.h>
-
-#define COLOR_ORDER GRB
-
-#define RIM_LED_PIN 12   // which pin your pixels are connected to
-#define TOP_LED_PIN 6   // which pin your pixels are connected to
+#include "ledConfig.h"
 
 #define BRIGHTNESS 50   // 0-255, higher number is brighter.
 #define SATURATION 255   // 0-255, 0 is pure white, 255 is fully saturated color
 
-#define RIM_LED_COUNT 93 // Number of LEDs around rim of hat
-#define TOP_LED_COUNT 36 // Number of LEDs on top of hat (i.e. around fan / goggles)
 CRGB rimLeds[RIM_LED_COUNT];
 CRGB topLeds[TOP_LED_COUNT];
 
 #include "audio.h"
 #include "button.h"
+#include "palettes.h"
 #include "fire.h"
 #include "soundReactiveDot.h"
 
@@ -25,6 +20,7 @@ FireData* topFireDataLeft;
 FireData* topFireDataRight;
 #define MS_TO_COOL 750
 
+// Memory for sound reactive dot animations
 SoundReactiveDotData* rimDotDataLeft;
 SoundReactiveDotData* rimDotDataRight;
 SoundReactiveDotData* topDotDataLeft;
@@ -58,13 +54,13 @@ void setup() {
 
 #define ANIMATION_COUNT 5
 
-#define FIRE_ANIMATION 0
-#define AUDIO_FIRE_ANIMATION 1
+#define AUDIO_FIRE_ANIMATION 0
+#define FIRE_ANIMATION 1
 #define WHITE_ANIMATION 2
-#define BLACK_ANIMATION 3
-#define SOUND_REACTIVE_DOT_ANIMATION 4
+#define SOUND_REACTIVE_DOT_ANIMATION 3
+#define SOUND_REACTIVE_DOT_FIRE_ANIMATION 4
 
-int currentAnimation = SOUND_REACTIVE_DOT_ANIMATION;
+int currentAnimation = SOUND_REACTIVE_DOT_FIRE_ANIMATION;
 
 void loop() {
   unsigned long currentTime = millis();
@@ -100,21 +96,20 @@ void loop() {
     }
     break;
 
-  case BLACK_ANIMATION:
-    for(int i = 0; i < RIM_LED_COUNT; i++) {
-      rimLeds[i] = CRGB::Black;
-    }
-    for(int i = 0; i < TOP_LED_COUNT; i++) {
-      topLeds[i] = CRGB::Black;
-    }
-    break;
-
   case SOUND_REACTIVE_DOT_ANIMATION:
     audioUpdate();
-    soundReactiveDot(rimDotDataLeft, rimLeds, RIM_LED_COUNT / 2, timeElapsed, audioLevel(), 62, RIM_LED_COUNT, 1);
-    soundReactiveDot(rimDotDataRight, rimLeds, RIM_LED_COUNT / 2, timeElapsed, audioLevel(), 61, RIM_LED_COUNT, -1);
-    soundReactiveDot(topDotDataLeft, topLeds, TOP_LED_COUNT / 2, timeElapsed, audioLevel(), 0, TOP_LED_COUNT, 1);
-    soundReactiveDot(topDotDataRight, topLeds, TOP_LED_COUNT / 2, timeElapsed, audioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
+    soundReactiveDot(rimDotDataLeft, RAINBOW_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, audioLevel(), 62, RIM_LED_COUNT, 1);
+    soundReactiveDot(rimDotDataRight, RAINBOW_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, audioLevel(), 61, RIM_LED_COUNT, -1);
+    soundReactiveDot(topDotDataLeft, RAINBOW_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, audioLevel(), 0, TOP_LED_COUNT, 1);
+    soundReactiveDot(topDotDataRight, RAINBOW_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, audioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
+    break;
+
+  case SOUND_REACTIVE_DOT_FIRE_ANIMATION:
+    audioUpdate();
+    soundReactiveDot(rimDotDataLeft, FIRE_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, audioLevel(), 62, RIM_LED_COUNT, 1);
+    soundReactiveDot(rimDotDataRight, FIRE_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, audioLevel(), 61, RIM_LED_COUNT, -1);
+    soundReactiveDot(topDotDataLeft, FIRE_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, audioLevel(), 0, TOP_LED_COUNT, 1);
+    soundReactiveDot(topDotDataRight, FIRE_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, audioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
     break;
   }
 
