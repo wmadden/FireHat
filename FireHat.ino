@@ -74,8 +74,8 @@ void loop() {
   switch (currentAnimation) {
   case AUDIO_FIRE_ANIMATION:
     audioUpdate();
-    fire(rimLeds, rimFireDataLeft, timeElapsed, unsmoothedAudioLevel(), 62, RIM_LED_COUNT, 1);
-    fire(rimLeds, rimFireDataRight, timeElapsed, unsmoothedAudioLevel(), 61, RIM_LED_COUNT, -1);
+    fire(rimLeds, rimFireDataLeft, timeElapsed, unsmoothedAudioLevel(), RIM_PHYSICAL_CENTER, RIM_LED_COUNT, 1);
+    fire(rimLeds, rimFireDataRight, timeElapsed, unsmoothedAudioLevel(), RIM_PHYSICAL_CENTER - 1, RIM_LED_COUNT, -1);
     fire(topLeds, topFireDataLeft, timeElapsed, unsmoothedAudioLevel(), 0, TOP_LED_COUNT, 1);
     fire(topLeds, topFireDataRight, timeElapsed, unsmoothedAudioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
     break;
