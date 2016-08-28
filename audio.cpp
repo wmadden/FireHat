@@ -19,7 +19,8 @@ void audioUpdate() {
   int      n, height;
   n   = analogRead(MIC_PIN);                 // Raw reading from mic
   rawAudioLevel = n;
-  n   = abs(n - DC_OFFSET);            // Center on zero
+  n   = n - DC_OFFSET;            // Center on zero
+  if (n < 0) n = 0;
   n   = (n <= NOISE) ? 0 : (n - NOISE);      // Remove noise/hum
   lvl = ((lvl * 7) + n) >> 3;    // "Dampened" reading (else looks twitchy)
 
@@ -41,7 +42,7 @@ void audioUpdate() {
   if((maxLvl - minLvl) < MIN_DIST_AUDIO_LEVELS) maxLvl = minLvl + MIN_DIST_AUDIO_LEVELS;
   minLvlAvg = (minLvlAvg * 63 + minLvl) >> 6; // Dampen min/max levels
   maxLvlAvg = (maxLvlAvg * 63 + maxLvl) >> 6; // (fake rolling average)
-  Serial.print(rawAudioLevel); Serial.print("\n");
+  Serial.print(lvl); Serial.print("\n");
 }
 
 int smoothedAudioLevel() {
