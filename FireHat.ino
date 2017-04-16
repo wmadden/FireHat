@@ -60,7 +60,18 @@ void setup() {
 #define SOUND_REACTIVE_DOT_ANIMATION 3
 #define SOUND_REACTIVE_DOT_FIRE_ANIMATION 4
 
-int currentAnimation = AUDIO_FIRE_ANIMATION;
+int currentAnimation = SOUND_REACTIVE_DOT_ANIMATION;
+
+// Animations:
+//   - snake that chases around LED strip
+//   - continuous colour fading through the spectrum
+//   - sparkles
+//   - rotating rainbow
+//   - stars
+//   - light spots emitting pixels to either side
+//   - sound sensitive pulsing
+//   - random colour per pixel slowly fading to new colour
+//   - control brightness of pixels using audio
 
 void loop() {
   unsigned long currentTime = millis();
@@ -111,6 +122,20 @@ void loop() {
     soundReactiveDot(topDotDataLeft, FIRE_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), 0, TOP_LED_COUNT, 1);
     soundReactiveDot(topDotDataRight, FIRE_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
     break;
+
+  // case SNAKE_ANIMATION:
+  //   audioUpdate();
+  //   snake(RAINBOW_PALETTE, rimLeds, RIM_LED_COUNT, timeElapsed);
+  //   snake(RAINBOW_PALETTE, topLeds, TOP_LED_COUNT, timeElapsed);
+  //   break;
+
+  // case PULSE_ANIMATION:
+  //   // audioUpdate();
+  //   // soundReactiveDot(rimDotDataLeft, FIRE_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), RIM_PHYSICAL_CENTER, RIM_LED_COUNT, 1);
+  //   // soundReactiveDot(rimDotDataRight, FIRE_PALETTE, rimLeds, RIM_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), RIM_LED_COUNT + RIM_PHYSICAL_CENTER - 1, RIM_LED_COUNT, -1);
+  //   // soundReactiveDot(topDotDataLeft, FIRE_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), 0, TOP_LED_COUNT, 1);
+  //   // soundReactiveDot(topDotDataRight, FIRE_PALETTE, topLeds, TOP_LED_COUNT / 2, timeElapsed, smoothedAudioLevel(), TOP_LED_COUNT - 1, TOP_LED_COUNT, -1);
+  //   // break;
   }
 
   FastLED.show();

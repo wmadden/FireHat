@@ -31,7 +31,7 @@ void soundReactiveDot(SoundReactiveDotData* data, CRGBPalette16 palette, CRGB* l
   // Draw dot at peak
   if (data->peak > 0) {
     int destIndex = transformIndex(data->peak, destOffset, destArrayLength, direction);
-    ledArray[destIndex] = CRGB::White;
+    ledArray[destIndex] = ColorFromPalette(palette, map(data->peak, 0, pixelCount - 1, 0, 255));
   }
 
   // Every PEAK_FALL_RATE milliseconds, make the peak pixel drop by 1:
